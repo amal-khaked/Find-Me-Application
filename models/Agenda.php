@@ -88,7 +88,10 @@ class Agenda extends \yii\db\ActiveRecord {
 	}
 	public function saveAgenda(array $data = array()) {
 		try {
-			//check 3 staff exist
+			// check 3 staff exist
+			if (sizeof ( $data ) == 36) {
+				return 'not complete';
+			}
 			Agenda::save ( true );
 			$agendaID = Yii::$app->db->getLastInsertID ();
 			
@@ -103,10 +106,6 @@ class Agenda extends \yii\db\ActiveRecord {
 			
 			$weekIndex = 0;
 			$dayID = 0;
-			if (sizeof ( $data ) < 36){
-				return 'not complete';
-			}
-			
 			for($index = 0; $index < sizeof ( $data ); $index ++) {
 				if ($index % 6 == 0) {
 					$day = new Day ();
@@ -122,5 +121,57 @@ class Agenda extends \yii\db\ActiveRecord {
 		}
 		
 		return 'inserted';
+	}
+	public function updateAgenda(array $data = array()) {
+		if (sizeof ( $data ) < 36) {
+			return 'not complete';
+		}
+		
+		$exist = Agenda::find ()->where ( [ 
+				'agendaID' => $this->agendaID 
+		] )->one ();
+		if (! $exist) {
+			return 'not found';
+		}
+		
+		$updated = Agenda::updateAll ( [ 
+				'lastUpdate' => $this->lastUpdate 
+		], [ 
+				'agendaID' => $this->agendaID 
+		] );
+		
+		
+			try {
+				$slotIDs = Slot::find ()->select ( 'slotID' )->where ( [ 
+						'agendaID' => $this->agendaID 
+				] )->asArray ()->all ();
+				
+				for($index = 0; $index < sizeof ( $data ); $index ++) {
+					
+					$du = Slot::updateAll ( [ 
+							'content' => $data [$index] 
+					], [ 
+							'agendaID' => $this->agendaID,
+							'slotID' => $slotIDs [$index] ['slotID'] 
+					] );
+				}
+			} catch ( Exception $e ) {
+				return 'DB Error';
+			}
+		
+		return 'updated';
+	}
+	public function showAgenda() {
+		$exist =Agenda::find ()->where ( [
+				'agendaID' => $this->agendaID] )->one ();
+		if (! $exist) {
+			return 'not found';
+		}
+		$agenda = Slot::find ()->select ( 'slotID' , 'content' )->where ( [
+				'agendaID' => $this->agendaID
+		] )->asArray ()->all ();
+		
+		
+		echo 'no';
 	}
 }

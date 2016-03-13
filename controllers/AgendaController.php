@@ -128,13 +128,47 @@ class AgendaController extends Controller {
 	}
 	public function actionSaveAgenda() {
 		$model = new Agenda ();
-		$model->owner = $_GET ['owner']; // 'amalahmed@fci';//
-		$model->lastUpdate = $_GET ['lastUpdate']; // '22-12';//
+		$model->owner = $_GET ['owner'];
+		$model->lastUpdate = date("Y/m/d");
 		$data = $_GET ['data'];
 		$status = $model->saveAgenda ( $data );
 		$value = array (
 				'status' => $status 
 		);
 		echo json_encode ( $value );
+	}
+	public function actionUpdateAgenda() {
+		$model = new Agenda ();
+		$model->agendaID = $_GET ['agendaID'];
+		$model->lastUpdate = date("Y/m/d");
+		$data = $_GET ['data'];
+		$status = $model->updateAgenda ( $data );
+		$value = array (
+				'status' => $status 
+		);
+		echo json_encode ( $value );
+	}
+	public function actionException() {
+		$model = new Agenda ();
+		$model->agendaID = $_GET ['agendaID'];
+		$model->lastUpdate = $_GET ['lastUpdate'];
+		$data = $_GET ['data'];
+		$status = $model->updateAgenda ( $data );
+		$value = array (
+				'status' => $status
+		);
+		echo json_encode ( $value );
+	}
+	//&owner=ahmed@fci
+	public function actionShowAgenda() {
+		$model = new Agenda ();
+		$model->agendaID = $_GET ['agendaID'];
+	    $model->showAgenda();
+	/*	$status =);
+		$value = array (
+				'status' => $status,
+				
+		);
+		echo json_encode ( $value );*/
 	}
 }
