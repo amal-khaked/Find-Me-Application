@@ -89,7 +89,7 @@ class Agenda extends \yii\db\ActiveRecord {
 	public function saveAgenda(array $data = array()) {
 		try {
 			// check 3 staff exist
-			if (sizeof ( $data ) == 36) {
+			if (sizeof ( $data ) < 36) {
 				return 'not complete';
 			}
 			Agenda::save ( true );
@@ -105,7 +105,8 @@ class Agenda extends \yii\db\ActiveRecord {
 			);
 			
 			$weekIndex = 0;
-			$dayID = 0;
+			$slotnum = 0;
+			
 			for($index = 0; $index < sizeof ( $data ); $index ++) {
 				if ($index % 6 == 0) {
 					$day = new Day ();
@@ -114,7 +115,7 @@ class Agenda extends \yii\db\ActiveRecord {
 					$weekIndex ++;
 				}
 				$slot = new Slot ();
-				$slot->saveSlot ( $dayID, $agendaID, $data [$index], 'perm', $this->lastUpdate );
+				$slot->saveSlot ( $dayID, $agendaID, $data [$index], 'perm', $this->lastUpdate, $index );
 			}
 		} catch ( Exception $e ) {
 			return 'DB Error';
@@ -140,38 +141,82 @@ class Agenda extends \yii\db\ActiveRecord {
 				'agendaID' => $this->agendaID 
 		] );
 		
-		
-			try {
-				$slotIDs = Slot::find ()->select ( 'slotID' )->where ( [ 
-						'agendaID' => $this->agendaID 
-				] )->asArray ()->all ();
+		try {
+			$slotIDs = Slot::find ()->select ( 'slotID' )->where ( [ 
+					'agendaID' => $this->agendaID 
+			] )->asArray ()->all ();
+			
+			for($index = 0; $index < sizeof ( $data ); $index ++) {
 				
-				for($index = 0; $index < sizeof ( $data ); $index ++) {
-					
-					$du = Slot::updateAll ( [ 
-							'content' => $data [$index] 
-					], [ 
-							'agendaID' => $this->agendaID,
-							'slotID' => $slotIDs [$index] ['slotID'] 
-					] );
-				}
-			} catch ( Exception $e ) {
-				return 'DB Error';
+				$du = Slot::updateAll ( [ 
+						'content' => $data [$index] 
+				], [ 
+						'agendaID' => $this->agendaID,
+						'slotID' => $slotIDs [$index] ['slotID'] 
+				] );
 			}
+		} catch ( Exception $e ) {
+			return 'DB Error';
+		}
 		
 		return 'updated';
 	}
 	public function showAgenda() {
-		$exist =Agenda::find ()->where ( [
-				'agendaID' => $this->agendaID] )->one ();
+		$exist = Agenda::find ()->where ( [ 
+				'agendaID' => $this->agendaID 
+		] )->one ();
 		if (! $exist) {
 			return 'not found';
 		}
-		$agenda = Slot::find ()->select ( 'slotID' , 'content' )->where ( [
-				'agendaID' => $this->agendaID
-		] )->asArray ()->all ();
+		$agenda = Slot::find ()->where ( [ 
+				'agendaID' => $this->agendaID 
+		] )->asArray ()->orderBy ( [ 
+				'slotnum' => SORT_ASC 
+		] )->all ();
+		$agendforShow = array ();
+		$perm;
+		$agendaForShowCounter = 0;
+		for($i = 0; $i < sizeof ( $agenda ); $i ++) {
+			$inserted = false;
+			if ($agenda [$i] ['type'] == 'temp' && $agenda [$i] ['date'] == $this->lastUpdate) {
+				$agendforShow [$agendaForShowCounter] = $agenda [$i];
+				$agendaForShowCounter ++;
+				$inserted = true;
+			}
+			if ($agenda [$i] ['type'] == 'perm') {
+				$perm = $agenda [$i];
+			} else {
+				$slotnum = $agenda [$i] ['slotnum'];
+				
+				for($index = $i + 1;; $index ++) {
+					if ($index == sizeof ( $agenda )) {
+						break;
+					}
+					
+					if ($slotnum == $agenda [$index] ['slotnum']) {
+						$i++;
+						if ($agenda [$index] ['type'] == 'perm') {
+							$perm = $agenda [$index];
+						}
+						if ($agenda [$index] ['type'] == 'temp' && $agenda [$index] ['date'] == $this->lastUpdate) {
+							
+							$agendforShow [$agendaForShowCounter] = $agenda [$i];
+							$agendaForShowCounter ++;
+							$inserted = true;
+							break;
+						}
+					} else {
+						break;
+					}
+				}
+			}
+			if ($inserted == false) {
+				
+				$agendforShow [$agendaForShowCounter] = $perm;
+				$agendaForShowCounter ++;
+			}
+		}
 		
-		
-		echo 'no';
+		return $agendforShow ;
 	}
 }

@@ -140,6 +140,7 @@ class AgendaController extends Controller {
 	public function actionUpdateAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
+		$agendaDate = $_GET ['agendaDate'];
 		$model->lastUpdate = date("Y/m/d");
 		$data = $_GET ['data'];
 		$status = $model->updateAgenda ( $data );
@@ -163,12 +164,11 @@ class AgendaController extends Controller {
 	public function actionShowAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
-	    $model->showAgenda();
-	/*	$status =);
+		$model->lastUpdate = $_GET ['date'];
+		$status = $model->showAgenda();
 		$value = array (
-				'status' => $status,
-				
+				'status' => $status,	
 		);
-		echo json_encode ( $value );*/
+		echo json_encode ( $value );
 	}
 }
