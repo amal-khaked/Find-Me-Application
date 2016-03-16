@@ -8,6 +8,7 @@ use app\models\AgendaSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Slot;
 
 /**
  * AgendaController implements the CRUD actions for Agenda model.
@@ -130,8 +131,9 @@ class AgendaController extends Controller {
 		$model = new Agenda ();
 		$model->owner = $_GET ['owner'];
 		$model->lastUpdate = date("Y/m/d");
-		$data = $_GET ['data'];
-		$status = $model->saveAgenda ( $data );
+		$content = $_GET ['data'];
+		$slotbuff = $_GET ['slotbuff'];
+		$status = $model->saveAgenda ( $content, $slotbuff);
 		$value = array (
 				'status' => $status 
 		);
@@ -140,27 +142,30 @@ class AgendaController extends Controller {
 	public function actionUpdateAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
-		$agendaDate = $_GET ['agendaDate'];
 		$model->lastUpdate = date("Y/m/d");
 		$data = $_GET ['data'];
-		$status = $model->updateAgenda ( $data );
+		$slotbuff = $_GET ['slotbuff'];
+		$slotnum = $_GET ['slotnum'];
+		$status = $model->updateAgenda ( $data , $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status 
 		);
 		echo json_encode ( $value );
 	}
 	public function actionException() {
-		$model = new Agenda ();
-		$model->agendaID = $_GET ['agendaID'];
+		$model = new agenda();
+		$model->owner = $_GET ['owner'];
 		$model->lastUpdate = $_GET ['lastUpdate'];
-		$data = $_GET ['data'];
-		$status = $model->updateAgenda ( $data );
+		$content = $_GET ['data'];
+		$slotbuff = $_GET ['slotbuff'];
+		$slotnum = $_GET ['slotnum'];
+		$agendamodel = new Agenda();
+		$status = $model->saveException ( $content , $slotbuff  , $slotnum);
 		$value = array (
 				'status' => $status
 		);
 		echo json_encode ( $value );
 	}
-	//&owner=ahmed@fci
 	public function actionShowAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
@@ -171,4 +176,5 @@ class AgendaController extends Controller {
 		);
 		echo json_encode ( $value );
 	}
+
 }
