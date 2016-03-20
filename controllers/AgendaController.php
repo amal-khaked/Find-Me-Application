@@ -139,7 +139,7 @@ class AgendaController extends Controller {
 		);
 		echo json_encode ( $value );
 	}
-	public function actionUpdateAgenda() {
+/*	public function actionUpdateAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
 		$model->lastUpdate = date("Y/m/d");
@@ -149,6 +149,32 @@ class AgendaController extends Controller {
 		$status = $model->updateAgenda ( $data , $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status 
+		);
+		echo json_encode ( $value );
+	}*/
+	public function actionUpdateExceptionAgenda() {
+		$model = new Agenda ();
+		$model->agendaID = $_GET ['agendaID'];
+		$model->lastUpdate = date("Y/m/d");
+		$data = $_GET ['data'];
+		$slotbuff = $_GET ['slotbuff'];
+		$slotnum = $_GET ['slotnum'];
+		$status = $model->updateExceptionAgenda( $data , $slotbuff, $slotnum );
+		$value = array (
+				'status' => $status
+		);
+		echo json_encode ( $value );
+	}
+	public function actionUpdateAgenda() {
+		$model = new Agenda ();
+		$model->agendaID = $_GET ['agendaID'];
+		$model->lastUpdate = date("Y/m/d");
+		$data = $_GET ['data'];
+		$slotbuff = $_GET ['slotbuff'];
+		$slotnum = $_GET ['slotnum'];
+		$status = $model->updateAgenda( $data , $slotbuff, $slotnum );
+		$value = array (
+				'status' => $status
 		);
 		echo json_encode ( $value );
 	}
@@ -169,7 +195,6 @@ class AgendaController extends Controller {
 	public function actionShowAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_GET ['agendaID'];
-		$model->lastUpdate = $_GET ['date'];
 		$status = $model->showAgenda();
 		$value = array (
 				'status' => $status,	

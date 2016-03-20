@@ -3,16 +3,16 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Slot;
-use app\models\SlotSearch;
+use app\models\Post;
+use app\models\PostSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * SlotController implements the CRUD actions for Slot model.
+ * PostController implements the CRUD actions for Post model.
  */
-class SlotController extends Controller {
+class PostController extends Controller {
 	public function behaviors() {
 		return [ 
 				'verbs' => [ 
@@ -27,12 +27,12 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Lists all Slot models.
-	 *
+	 * Lists all Post models.
+	 * 
 	 * @return mixed
 	 */
 	public function actionIndex() {
-		$searchModel = new SlotSearch ();
+		$searchModel = new PostSearch ();
 		$dataProvider = $searchModel->search ( Yii::$app->request->queryParams );
 		
 		return $this->render ( 'index', [ 
@@ -42,8 +42,8 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Displays a single Slot model.
-	 *
+	 * Displays a single Post model.
+	 * 
 	 * @param integer $id        	
 	 * @return mixed
 	 */
@@ -54,18 +54,18 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Creates a new Slot model.
+	 * Creates a new Post model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 *
+	 * 
 	 * @return mixed
 	 */
 	public function actionCreate() {
-		$model = new Slot ();
+		$model = new Post ();
 		
 		if ($model->load ( Yii::$app->request->post () ) && $model->save ()) {
 			return $this->redirect ( [ 
 					'view',
-					'id' => $model->slotID 
+					'id' => $model->postID 
 			] );
 		} else {
 			return $this->render ( 'create', [ 
@@ -75,9 +75,9 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Updates an existing Slot model.
+	 * Updates an existing Post model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
-	 *
+	 * 
 	 * @param integer $id        	
 	 * @return mixed
 	 */
@@ -87,7 +87,7 @@ class SlotController extends Controller {
 		if ($model->load ( Yii::$app->request->post () ) && $model->save ()) {
 			return $this->redirect ( [ 
 					'view',
-					'id' => $model->slotID 
+					'id' => $model->postID 
 			] );
 		} else {
 			return $this->render ( 'update', [ 
@@ -97,9 +97,9 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Deletes an existing Slot model.
+	 * Deletes an existing Post model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
-	 *
+	 * 
 	 * @param integer $id        	
 	 * @return mixed
 	 */
@@ -112,32 +112,73 @@ class SlotController extends Controller {
 	}
 	
 	/**
-	 * Finds the Slot model based on its primary key value.
+	 * Finds the Post model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
-	 *
+	 * 
 	 * @param integer $id        	
-	 * @return Slot the loaded model
+	 * @return Post the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id) {
-		if (($model = Slot::findOne ( $id )) !== null) {
+		if (($model = Post::findOne ( $id )) !== null) {
 			return $model;
 		} else {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
 	}
-	public function actionSaveSlot() {
-		$model = new Slot ();
-		$model->dayID = $_GET ['dayID'];
-		$model->agendaID = $_GET ['agendaID'];
-		$model->content = $_GET ['content'];
-		$model->type = $_GET ['type'];
-		$model->date = $_GET ['date'];
+	public function actionGetmyposts() {
+		$id = $_GET ['id'];
+		$model = array ();
+		$model = Post::findAll ( ([ 
+				'owner' => $id 
+		]) );
 		
-		if ($model->saveSlot ()) {
-			echo "inserted";
-		} else
-			echo "not inserted";
+		$status = array ();
+		if ($model == Null) {
+			$status ["status"] = "faild";
+		} else {
+			for($i = 0; $i < sizeof ( $model ); $i ++) {
+				$status ["content"] [$i] = $model [$i]->content;
+				$status ["time"] [$i] = $model [$i]->time;
+			}
+		}
+		return json_encode ( $status );
 	}
-	
+	public function actionGetpost() {
+		$id = $_GET ['id'];
+		$follow = new Follow ();
+		$follow->studentID = $id;
+		$model = array ();
+		$model = Follow::findAll ( ([ 
+				'studentID' => $id 
+		]) );
+		$status = array ();
+		if ($model == Null) {
+			$status ["status"] = "faild";
+		} else {
+			for($j = 0; $j < sizeof ( $model ); $j ++) {
+				$status ["follower"] [$j] = $model [$j]->staffID;
+				// $staff_id=$model[$j]->staffID;
+			}
+		}
+		$posts = array ();
+		$statuss = array ();
+		$i = 0;
+		for($i = 0; $i < sizeof ( $model ); $i ++) {
+			$staff_id = $model [$i]->staffID;
+			
+			$posts = Post::findAll ( ([ 
+					'owner' => $staff_id 
+			]) );
+			if ($posts == Null) {
+			} else {
+				for($m = 0; $m < sizeof ( $posts ); $m ++) {
+					$statuss ["content"] [$m] = $posts [$m]->content;
+					$statuss ["owner"] [$m] = $posts [$m]->owner;
+					$statuss ["time"] [$m] = $posts [$m]->time;
+				}
+			}
+		}
+		return json_encode ( $statuss );
+	}
 }

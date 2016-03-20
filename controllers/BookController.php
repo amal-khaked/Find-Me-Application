@@ -3,16 +3,17 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Slot;
-use app\models\SlotSearch;
+use app\models\Book;
+use app\models\BookSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\Slot;
 
 /**
- * SlotController implements the CRUD actions for Slot model.
+ * BookController implements the CRUD actions for Book model.
  */
-class SlottController extends Controller {
+class BookController extends Controller {
 	public function behaviors() {
 		return [ 
 				'verbs' => [ 
@@ -27,12 +28,12 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Lists all Slot models.
+	 * Lists all Book models.
 	 * 
 	 * @return mixed
 	 */
 	public function actionIndex() {
-		$searchModel = new SlotSearch ();
+		$searchModel = new BookSearch ();
 		$dataProvider = $searchModel->search ( Yii::$app->request->queryParams );
 		
 		return $this->render ( 'index', [ 
@@ -42,7 +43,7 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Displays a single Slot model.
+	 * Displays a single Book model.
 	 * 
 	 * @param integer $id        	
 	 * @return mixed
@@ -54,18 +55,18 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Creates a new Slot model.
+	 * Creates a new Book model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 * 
 	 * @return mixed
 	 */
 	public function actionCreate() {
-		$model = new Slot ();
+		$model = new Book ();
 		
 		if ($model->load ( Yii::$app->request->post () ) && $model->save ()) {
 			return $this->redirect ( [ 
 					'view',
-					'id' => $model->slotID 
+					'id' => $model->bookID 
 			] );
 		} else {
 			return $this->render ( 'create', [ 
@@ -75,7 +76,7 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Updates an existing Slot model.
+	 * Updates an existing Book model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * 
 	 * @param integer $id        	
@@ -87,7 +88,7 @@ class SlottController extends Controller {
 		if ($model->load ( Yii::$app->request->post () ) && $model->save ()) {
 			return $this->redirect ( [ 
 					'view',
-					'id' => $model->slotID 
+					'id' => $model->bookID 
 			] );
 		} else {
 			return $this->render ( 'update', [ 
@@ -97,7 +98,7 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Deletes an existing Slot model.
+	 * Deletes an existing Book model.
 	 * If deletion is successful, the browser will be redirected to the 'index' page.
 	 * 
 	 * @param integer $id        	
@@ -112,28 +113,77 @@ class SlottController extends Controller {
 	}
 	
 	/**
-	 * Finds the Slot model based on its primary key value.
+	 * Finds the Book model based on its primary key value.
 	 * If the model is not found, a 404 HTTP exception will be thrown.
 	 * 
 	 * @param integer $id        	
-	 * @return Slot the loaded model
+	 * @return Book the loaded model
 	 * @throws NotFoundHttpException if the model cannot be found
 	 */
 	protected function findModel($id) {
-		if (($model = Slot::findOne ( $id )) !== null) {
+		if (($model = Book::findOne ( $id )) !== null) {
 			return $model;
 		} else {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
 	}
-	public function actionSaveSlot() {
+	
+	public function actionBook() 
+	{
+		//handel if slotId not exist
+		//handel student not exist
+		$StudentID = $_GET ['StudentID'];
+		$SlotID = $_GET ['SlotID'];
+		$model = Slot::find()->where( [ 'slotID' => $SlotID])->one();
+		$max = $model->numberOfBookers;
+		$book = array ();
+		$book = Book::find()->where( [ 'slotID' => $SlotID ] )->all();
+		if($book==NULL)
+		{
 		
-		/*$model = new Slot ();
-		//$model->dayID = $_GET['dayID'];
-		if ($model->saveSlot ( '1','1' , 'djsfj', 'no', '22-12' )) {
-			echo "inserted";
 		}
-    	else 
-    		echo "not inserted";
-	*/}
+		$check = FALSE;
+		echo "hhhhhhhh";
+		for($i = 0; $i < sizeof ($book ); $i++) 
+		{
+			if ($book [$i]->studentID == $StudentID) 
+			{
+				$check = TRUE;
+				echo "noooooooooooo";
+				break;
+			}
+				
+		}
+		$status = array ();
+		
+		if ($check == FALSE) 
+		{
+			$checkmax = $model->bookCount;
+			if ($checkmax < $max)
+			{
+				echo "in max";
+				$bookmodel = new Book;
+				$bookmodel->studentID = $StudentID;
+				$bookmodel->slotID = $SlotID;
+				if ($bookmodel->save ())
+				{
+					$model->bookCount = $model->bookCount + 1;
+					if ($model->save ()) 
+					{
+						$status ["status"] = "ok";
+					}
+				}
+			}
+			else 
+			{
+				$status["status"] = "Greater Than Max";
+			}
+		}
+		else 
+		{
+			$status["status"] = "You are already booked";
+		}
+	echo	json_encode($status);
+	}
+
 }
