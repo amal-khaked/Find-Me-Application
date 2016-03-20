@@ -129,10 +129,10 @@ class AgendaController extends Controller {
 	}
 	public function actionSaveAgenda() {
 		$model = new Agenda ();
-		$model->owner = $_GET ['owner'];
+		$model->owner = $_POST ['owner'];
 		$model->lastUpdate = date("Y/m/d");
-		$content = $_GET ['data'];
-		$slotbuff = $_GET ['slotbuff'];
+		$content = $_POST ['data'];
+		$slotbuff = $_POST ['slotbuff'];
 		$status = $model->saveAgenda ( $content, $slotbuff);
 		$value = array (
 				'status' => $status 
@@ -154,11 +154,11 @@ class AgendaController extends Controller {
 	}*/
 	public function actionUpdateExceptionAgenda() {
 		$model = new Agenda ();
-		$model->agendaID = $_GET ['agendaID'];
+		$model->agendaID = $_POST ['agendaID'];
 		$model->lastUpdate = date("Y/m/d");
-		$data = $_GET ['data'];
-		$slotbuff = $_GET ['slotbuff'];
-		$slotnum = $_GET ['slotnum'];
+		$data = $_POST ['data'];
+		$slotbuff = $_POST ['slotbuff'];
+		$slotnum = $_POST ['slotnum'];
 		$status = $model->updateExceptionAgenda( $data , $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status
@@ -167,11 +167,11 @@ class AgendaController extends Controller {
 	}
 	public function actionUpdateAgenda() {
 		$model = new Agenda ();
-		$model->agendaID = $_GET ['agendaID'];
+		$model->agendaID = $_POST ['agendaID'];
 		$model->lastUpdate = date("Y/m/d");
-		$data = $_GET ['data'];
-		$slotbuff = $_GET ['slotbuff'];
-		$slotnum = $_GET ['slotnum'];
+		$data = $_POST ['data'];
+		$slotbuff = $_POST ['slotbuff'];
+		$slotnum = $_POST ['slotnum'];
 		$status = $model->updateAgenda( $data , $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status
@@ -180,11 +180,11 @@ class AgendaController extends Controller {
 	}
 	public function actionException() {
 		$model = new agenda();
-		$model->owner = $_GET ['owner'];
-		$model->lastUpdate = $_GET ['lastUpdate'];
-		$content = $_GET ['data'];
-		$slotbuff = $_GET ['slotbuff'];
-		$slotnum = $_GET ['slotnum'];
+		$model->owner = $_POST ['owner'];
+		$model->lastUpdate = $_POST ['lastUpdate'];
+		$content = $_POST ['data'];
+		$slotbuff = $_POST ['slotbuff'];
+		$slotnum = $_POST ['slotnum'];
 		$agendamodel = new Agenda();
 		$status = $model->saveException ( $content , $slotbuff  , $slotnum);
 		$value = array (
@@ -194,7 +194,7 @@ class AgendaController extends Controller {
 	}
 	public function actionShowAgenda() {
 		$model = new Agenda ();
-		$model->agendaID = $_GET ['agendaID'];
+		$model->agendaID = $_POST['agendaID'];
 		$status = $model->showAgenda();
 		$value = array (
 				'status' => $status,	
