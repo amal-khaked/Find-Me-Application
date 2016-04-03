@@ -156,8 +156,8 @@ class StaffController extends Controller {
 		return json_encode ( $status );
 	}
 	public function actionLogin() {
-		$formalemail = $_GET ['id'];
-		$pass = $_GET ['pass'];
+		$formalemail = $_POST ['id'];
+		$pass = $_POST ['pass'];
 		$model = Staff::find ()->where ( [ 
 				'formalemail' => $formalemail,
 				'password' => $pass 

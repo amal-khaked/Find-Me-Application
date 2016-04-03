@@ -86,7 +86,7 @@ class Agenda extends \yii\db\ActiveRecord
     		return 'DB Error';
     	}
     
-    	return 'inserted';
+    	return $agendaID;
     }
     public function saveException(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
     	$this->type = 'temp';
@@ -194,26 +194,38 @@ class Agenda extends \yii\db\ActiveRecord
     
     	while ( $permindex < sizeof ( $permSlotIDs ) && $tempindex < sizeof ( $tempSlotIDs ) ) {
     		if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]) {
-    			$agendforShow [$index] = $tempSlotIDs [$tempindex];
+    			$agendforShow [$index]['slotID'] = $tempSlotIDs [$tempindex]['slotID'];
+    			$agendforShow [$index]['maxBookers'] = $tempSlotIDs [$tempindex]['numberOfBookers'];
+    			$agendforShow [$index]['bookCount'] = $tempSlotIDs [$tempindex]['bookCount'];
+    			$agendforShow [$index]['content'] = $tempSlotIDs [$tempindex]['content'];
     			$tempindex ++;
     			$index ++;
     		} else {
-    			$agendforShow [$index] = $permSlotIDs [$permindex];
+    			$agendforShow [$index]['slotID'] = $permSlotIDs  [$permindex]['slotID'];
+    			$agendforShow [$index]['maxBookers'] = $permSlotIDs  [$permindex]['numberOfBookers'];
+    			$agendforShow [$index]['bookCount'] = $permSlotIDs  [$permindex]['bookCount'];
+    			$agendforShow [$index]['content'] = $permSlotIDs  [$permindex]['content'];
+    			 
     			$permindex ++;
     			$index ++;
     		}
     	}
     
     	while ( $tempindex < sizeof ( $tempSlotIDs ) ) {
-    		$agendforShow [$index] = $tempSlotIDs [$tempindex];
+    		$agendforShow [$index]['slotID'] = $tempSlotIDs [$tempindex]['slotID'];
+    		$agendforShow [$index]['maxBookers'] = $tempSlotIDs [$tempindex]['numberOfBookers'];
+    		$agendforShow [$index]['bookCount'] = $tempSlotIDs [$tempindex]['bookCount'];
+    		$agendforShow [$index]['content'] = $tempSlotIDs [$tempindex]['content'];
     		$tempindex ++;
     		$index ++;
     	}
     
     	while ( $permindex < sizeof ( $permSlotIDs ) ) {
-    			
-    		$agendforShow [$index] = $permSlotIDs [$permindex];
-    		$permindex ++;
+    		$agendforShow [$index]['slotID'] = $permSlotIDs  [$permindex]['slotID'];
+    		$agendforShow [$index]['maxBookers'] = $permSlotIDs  [$permindex]['numberOfBookers'];
+    		$agendforShow [$index]['bookCount'] = $permSlotIDs  [$permindex]['bookCount'];
+    		$agendforShow [$index]['content'] = $permSlotIDs  [$permindex]['content'];
+    		    		$permindex ++;
     		$index ++;
     	}
     	return $agendforShow;

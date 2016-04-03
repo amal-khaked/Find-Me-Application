@@ -127,7 +127,7 @@ class AgendaController extends Controller {
 			throw new NotFoundHttpException ( 'The requested page does not exist.' );
 		}
 	}
-	public function actionSaveAgenda() {
+	public function actionCreateAgenda() {
 		$model = new Agenda ();
 		$model->owner = $_POST ['owner'];
 		$model->lastUpdate = date("Y/m/d");
@@ -196,10 +196,29 @@ class AgendaController extends Controller {
 		$model = new Agenda ();
 		$model->agendaID = $_POST['agendaID'];
 		$status = $model->showAgenda();
-		$value = array (
-				'status' => $status,	
-		);
-		echo json_encode ( $value );
+		echo json_encode ( $status );
+	}
+	public function actionGetAgendaInfo(){
+		
+		$owner = $_POST ['owner'];
+		$exist = Agenda::find ()->where ( [
+				'owner' => $owner,
+				'type' => 'perm'
+		] )->asArray()->one ();
+		if ($exist == null){
+			$exist = array('Status'=>'notAgenda');
+		}
+		echo json_encode ( $exist );
+	
+	}
+	public function actionGetExceptions(){
+		$owner = $_POST ['owner'];
+		$exist = Agenda::find ()->select(array ('lastUpdate', 'agendaID'))->where ( [
+				'owner' => $owner,
+				'type' => 'temp'
+		] )->asArray()->all();
+		
+		echo json_encode ( $exist );
 	}
 
 }
