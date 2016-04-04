@@ -194,8 +194,15 @@ class AgendaController extends Controller {
 	}
 	public function actionShowAgenda() {
 		$model = new Agenda ();
-		$model->agendaID = $_POST['agendaID'];
+		$model->owner = $_POST['owner'];
+		$model->lastUpdate = date("Y/m/d");
 		$status = $model->showAgenda();
+		echo json_encode ( $status );
+	}
+	public function actionShowExceptionAgenda() {
+		$model = new Agenda ();
+		$model->agendaID = $_POST['agendaID'];
+		$status = $model->showExceptionAgenda();
 		echo json_encode ( $status );
 	}
 	public function actionGetAgendaInfo(){
