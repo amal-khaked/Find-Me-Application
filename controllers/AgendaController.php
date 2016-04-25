@@ -130,102 +130,118 @@ class AgendaController extends Controller {
 	public function actionCreateAgenda() {
 		$model = new Agenda ();
 		$model->owner = $_POST ['owner'];
-		$model->lastUpdate = date("Y/m/d");
-		$content = $_POST ['data'];
-		$slotbuff = $_POST ['slotbuff'];
-		$status = $model->saveAgenda ( $content, $slotbuff);
+		$model->lastUpdate = date ( "Y/m/d" );
+		$content = json_decode ( $_POST ['data'] );
+		$slotbuff = json_decode ( $_POST ['slotbuff'] );
+		$status = $model->saveAgenda ( $content, $slotbuff );
 		$value = array (
 				'status' => $status 
 		);
 		echo json_encode ( $value );
 	}
-/*	public function actionUpdateAgenda() {
-		$model = new Agenda ();
-		$model->agendaID = $_GET ['agendaID'];
-		$model->lastUpdate = date("Y/m/d");
-		$data = $_GET ['data'];
-		$slotbuff = $_GET ['slotbuff'];
-		$slotnum = $_GET ['slotnum'];
-		$status = $model->updateAgenda ( $data , $slotbuff, $slotnum );
-		$value = array (
-				'status' => $status 
-		);
-		echo json_encode ( $value );
-	}*/
+	/*
+	 * public function actionUpdateAgenda() {
+	 * $model = new Agenda ();
+	 * $model->agendaID = $_GET ['agendaID'];
+	 * $model->lastUpdate = date("Y/m/d");
+	 * $data = $_GET ['data'];
+	 * $slotbuff = $_GET ['slotbuff'];
+	 * $slotnum = $_GET ['slotnum'];
+	 * $status = $model->updateAgenda ( $data , $slotbuff, $slotnum );
+	 * $value = array (
+	 * 'status' => $status
+	 * );
+	 * echo json_encode ( $value );
+	 * }
+	 */
 	public function actionUpdateExceptionAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_POST ['agendaID'];
-		$model->lastUpdate = date("Y/m/d");
+		$model->lastUpdate = date ( "Y/m/d" );
 		$data = $_POST ['data'];
 		$slotbuff = $_POST ['slotbuff'];
 		$slotnum = $_POST ['slotnum'];
-		$status = $model->updateExceptionAgenda( $data , $slotbuff, $slotnum );
+		$status = $model->updateExceptionAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
-				'status' => $status
+				'status' => $status 
 		);
 		echo json_encode ( $value );
 	}
 	public function actionUpdateAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_POST ['agendaID'];
-		$model->lastUpdate = date("Y/m/d");
-		$data = $_POST ['data'];
-		$slotbuff = $_POST ['slotbuff'];
-		$slotnum = $_POST ['slotnum'];
-		$status = $model->updateAgenda( $data , $slotbuff, $slotnum );
+		$model->lastUpdate = date ( "Y/m/d" );
+		$data = json_decode ( $_POST ['data'] );
+		$slotbuff = json_decode ( $_POST ['slotbuff'] );
+		$slotnum = json_decode ( $_POST ['slotnum'] );
+		$status = $model->updateAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
-				'status' => $status
-		);
+				'status' => $status 
+		)
+		// 'status' => "yes baby yes"
+		;
 		echo json_encode ( $value );
 	}
-	public function actionException() {
-		$model = new agenda();
+	public function actionCreateException() {
+		$model = new agenda ();
 		$model->owner = $_POST ['owner'];
 		$model->lastUpdate = $_POST ['lastUpdate'];
-		$content = $_POST ['data'];
-		$slotbuff = $_POST ['slotbuff'];
-		$slotnum = $_POST ['slotnum'];
-		$agendamodel = new Agenda();
-		$status = $model->saveException ( $content , $slotbuff  , $slotnum);
+		$content = json_decode ($_POST ['data']);
+		$slotbuff = json_decode ($_POST ['slotbuff']);
+		$slotnum = json_decode ($_POST ['slotnum']);
+		$status = $model->saveException ( $content, $slotbuff, $slotnum );
 		$value = array (
-				'status' => $status
+				'status' => $status 
+			//'status' => $model->lastUpdate
 		);
 		echo json_encode ( $value );
 	}
+	/*
+	 * public function actionShowAgenda() {
+	 * $model = new Agenda ();
+	 * $model->owner = $_POST['owner'];
+	 * $model->lastUpdate = date("Y/m/d");
+	 * $status = $model->showAgenda();
+	 * echo json_encode ( $status );
+	 * }
+	 */
 	public function actionShowAgenda() {
 		$model = new Agenda ();
-		$model->owner = $_POST['owner'];
-		$model->lastUpdate = date("Y/m/d");
-		$status = $model->showAgenda();
+		$model->agendaID = $_POST ['agendaID'];
+		$status = $model->showAgenda ();
 		echo json_encode ( $status );
 	}
-	public function actionShowExceptionAgenda() {
-		$model = new Agenda ();
-		$model->agendaID = $_POST['agendaID'];
-		$status = $model->showExceptionAgenda();
-		echo json_encode ( $status );
-	}
-	public function actionGetAgendaInfo(){
-		
+	public function actionGetAgendaInfo() {
 		$owner = $_POST ['owner'];
-		$exist = Agenda::find ()->where ( [
+		$date = $_POST ['date'];
+		$exist = Agenda::find ()->where ( [ 
 				'owner' => $owner,
-				'type' => 'perm'
-		] )->asArray()->one ();
-		if ($exist == null){
-			$exist = array('Status'=>'notAgenda');
+				'lastUpdate' => $date 
+		] )->asArray ()->one ();
+		
+		if ($exist == null) {
+			$exist = Agenda::find ()->where ( [ 
+					'owner' => $owner,
+					'type' => 'perm' 
+			] )->asArray ()->one ();
+			if ($exist == null) {
+				$exist = array (
+						'Status' => 'notAgenda' 
+				);
+			}
 		}
 		echo json_encode ( $exist );
-	
 	}
-	public function actionGetExceptions(){
+	public function actionGetExceptions() {
 		$owner = $_POST ['owner'];
-		$exist = Agenda::find ()->select(array ('lastUpdate', 'agendaID'))->where ( [
+		$exist = Agenda::find ()->select ( array (
+				'lastUpdate',
+				'agendaID' 
+		) )->where ( [ 
 				'owner' => $owner,
-				'type' => 'temp'
-		] )->asArray()->all();
+				'type' => 'temp' 
+		] )->asArray ()->all ();
 		
 		echo json_encode ( $exist );
 	}
-
 }

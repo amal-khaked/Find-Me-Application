@@ -92,10 +92,6 @@ class Agenda extends \yii\db\ActiveRecord {
 	}
 	public function saveAgenda(array $data = array(), array $bookbuffer = array()) {
 		try {
-			// check 3 staff exist
-			if (sizeof ( $data ) < 36) {
-				return 'not complete';
-			}
 			$this->type = 'perm';
 			Agenda::save ( true );
 			$agendaID = Yii::$app->db->getLastInsertID ();
@@ -109,7 +105,6 @@ class Agenda extends \yii\db\ActiveRecord {
 		} catch ( Exception $e ) {
 			return 'DB Error';
 		}
-		
 		return $agendaID;
 	}
 	public function saveException(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
@@ -171,6 +166,7 @@ class Agenda extends \yii\db\ActiveRecord {
 		$model = new Slot ();
 		$permAgendaID = array ();
 		$resylt;
+		$data4 = array ();
 		Agenda::updateAll ( [ 
 				'lastUpdate' => $this->lastUpdate 
 		], [ 
@@ -181,17 +177,26 @@ class Agenda extends \yii\db\ActiveRecord {
 		
 		$permindex = 0;
 		$b = 1;
+		$count = 0;
 		for($index = 0; $index < sizeof ( $data ); $permindex ++) {
 			
 			if ($permAgendaID [$permindex] ['slotnum'] == $slotnum [$index]) {
-				echo $model->updateSlot ( $data [$index], $bookbuffer [$index], $slotnum [$index], $permSlotIDs [$index] ['slotID'] );
+				/*
+				 * $data4[$count]= $data [$index];
+				 * $count++;
+				 * $data4[$count]= $bookbuffer [$index];
+				 * $count++;
+				 * $data4[$count]= $permSlotIDs [$permindex] ['slotID'];
+				 * $count++;
+				 */
+				echo $model->updateSlot ( $data [$index], $bookbuffer [$index], $slotnum [$index], $permSlotIDs [$permindex] ['slotID'] );
 				$index ++;
 			}
 		}
 		
-		return 'updated';
+		return $data4; // 'updated';
 	}
-	public function showExceptionAgenda() {
+	public function showAgenda() {
 		$model = new Slot ();
 		
 		$exist = Agenda::find ()->where ( [ 
@@ -253,72 +258,74 @@ class Agenda extends \yii\db\ActiveRecord {
 		}
 		return $agendforShow;
 	}
-	public function showAgenda() {
-		$model = new Slot ();
-		
-		$exist = Agenda::find ()->where ( [ 
-				'owner' => $this->owner,
-				'lastUpdate' => $this->lastUpdate 
-		] )->one ();
-		if ($exist == null) {
-			$exist = Agenda::find ()->where ( [ 
-					'owner' => $this->owner,
-					'type' => 'perm' 
-			] )->one ();
-		}
-		$permAgendaID = Agenda::find ()->where ( [ 
-				'owner' => $exist ['owner'],
-				'type' => 'perm' 
-		] )->one ();
-		
-		$tempSlotIDs = array ();
-		if ($exist ['type'] == 'temp') {
-			$tempSlotIDs = $model->getIDs ( $this->agendaID );
-		}
-		
-		$permSlotIDs = $model->getIDs ( $permAgendaID ['agendaID'] );
-		
-		$permindex = 0;
-		$tempindex = 0;
-		$agendforShow = array ();
-		$index = 0;
-		
-		while ( $permindex < sizeof ( $permSlotIDs ) && $tempindex < sizeof ( $tempSlotIDs ) ) {
-			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]) {
-				$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
-				$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
-				$agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
-				$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
-				$tempindex ++;
-				$index ++;
-			} else {
-				$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
-				$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
-				$agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
-				$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
-				
-				$permindex ++;
-				$index ++;
-			}
-		}
-		
-		while ( $tempindex < sizeof ( $tempSlotIDs ) ) {
-			$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
-			$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
-			$agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
-			$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
-			$tempindex ++;
-			$index ++;
-		}
-		
-		while ( $permindex < sizeof ( $permSlotIDs ) ) {
-			$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
-			$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
-			$agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
-			$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
-			$permindex ++;
-			$index ++;
-		}
-		return $agendforShow;
-	}
+	/*
+	 * public function showAgenda() {
+	 * $model = new Slot ();
+	 *
+	 * $exist = Agenda::find ()->where ( [
+	 * 'owner' => $this->owner,
+	 * 'lastUpdate' => $this->lastUpdate
+	 * ] )->one ();
+	 * if ($exist == null) {
+	 * $exist = Agenda::find ()->where ( [
+	 * 'owner' => $this->owner,
+	 * 'type' => 'perm'
+	 * ] )->one ();
+	 * }
+	 * $permAgendaID = Agenda::find ()->where ( [
+	 * 'owner' => $exist ['owner'],
+	 * 'type' => 'perm'
+	 * ] )->one ();
+	 *
+	 * $tempSlotIDs = array ();
+	 * if ($exist ['type'] == 'temp') {
+	 * $tempSlotIDs = $model->getIDs ( $this->agendaID );
+	 * }
+	 *
+	 * $permSlotIDs = $model->getIDs ( $permAgendaID ['agendaID'] );
+	 *
+	 * $permindex = 0;
+	 * $tempindex = 0;
+	 * $agendforShow = array ();
+	 * $index = 0;
+	 *
+	 * while ( $permindex < sizeof ( $permSlotIDs ) && $tempindex < sizeof ( $tempSlotIDs ) ) {
+	 * if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]) {
+	 * $agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
+	 * $agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
+	 * $agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
+	 * $agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
+	 * $tempindex ++;
+	 * $index ++;
+	 * } else {
+	 * $agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
+	 * $agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
+	 * $agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
+	 * $agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
+	 *
+	 * $permindex ++;
+	 * $index ++;
+	 * }
+	 * }
+	 *
+	 * while ( $tempindex < sizeof ( $tempSlotIDs ) ) {
+	 * $agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
+	 * $agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
+	 * $agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
+	 * $agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
+	 * $tempindex ++;
+	 * $index ++;
+	 * }
+	 *
+	 * while ( $permindex < sizeof ( $permSlotIDs ) ) {
+	 * $agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
+	 * $agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
+	 * $agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
+	 * $agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
+	 * $permindex ++;
+	 * $index ++;
+	 * }
+	 * return $agendforShow;
+	 * }
+	 */
 }
