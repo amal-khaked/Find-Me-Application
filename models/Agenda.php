@@ -166,7 +166,6 @@ class Agenda extends \yii\db\ActiveRecord {
 		$model = new Slot ();
 		$permAgendaID = array ();
 		$resylt;
-		$data4 = array ();
 		Agenda::updateAll ( [ 
 				'lastUpdate' => $this->lastUpdate 
 		], [ 
@@ -177,24 +176,15 @@ class Agenda extends \yii\db\ActiveRecord {
 		
 		$permindex = 0;
 		$b = 1;
-		$count = 0;
 		for($index = 0; $index < sizeof ( $data ); $permindex ++) {
 			
 			if ($permAgendaID [$permindex] ['slotnum'] == $slotnum [$index]) {
-				/*
-				 * $data4[$count]= $data [$index];
-				 * $count++;
-				 * $data4[$count]= $bookbuffer [$index];
-				 * $count++;
-				 * $data4[$count]= $permSlotIDs [$permindex] ['slotID'];
-				 * $count++;
-				 */
-				echo $model->updateSlot ( $data [$index], $bookbuffer [$index], $slotnum [$index], $permSlotIDs [$permindex] ['slotID'] );
+				echo $model->updateSlot ( $data [$index], $bookbuffer [$index], $permSlotIDs [$permindex] ['slotID'] );
 				$index ++;
 			}
 		}
 		
-		return $data4; // 'updated';
+		return 'updated';
 	}
 	public function showAgenda() {
 		$model = new Slot ();

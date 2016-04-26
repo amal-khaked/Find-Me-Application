@@ -96,15 +96,16 @@ class Slot extends \yii\db\ActiveRecord
     
     }
     public function updateSlot($content , $slotbuffer , $slotID){
-    
-    	$updated =Slot::update(array (
-    			'content' => $content,
+
+    	$updated = Slot::updateAll (array ( 
+				'content' => $content,
     			'numberOfBookers' => $slotbuffer
-    	), [
-    			'slotID' => $slotID
-    	] );
-    
+    			
+		), [ 
+				'slotID' => $slotID
+		] );
     
     	return $updated;
+    	
     }
 }
