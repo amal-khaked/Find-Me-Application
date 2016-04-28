@@ -7,12 +7,11 @@ use Yii;
 /**
  * This is the model class for table "student".
  *
- * @property integer $id
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property string $password
  *
- * @property Book[] $books
  * @property Follow[] $follows
  * @property Notification[] $notifications
  */
@@ -33,8 +32,8 @@ class Student extends \yii\db\ActiveRecord
     {
         return [
             [['id', 'name', 'email', 'password'], 'required'],
-            [['id'], 'integer'],
-            [['name', 'email', 'password'], 'string', 'max' => 50]
+            [['id', 'name', 'email', 'password'], 'string', 'max' => 50],
+            [['email'], 'unique']
         ];
     }
 
@@ -49,14 +48,6 @@ class Student extends \yii\db\ActiveRecord
             'email' => 'Email',
             'password' => 'Password',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBooks()
-    {
-        return $this->hasMany(Book::className(), ['studentID' => 'id']);
     }
 
     /**

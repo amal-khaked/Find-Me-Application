@@ -158,9 +158,9 @@ class AgendaController extends Controller {
 		$model = new Agenda ();
 		$model->agendaID = $_POST ['agendaID'];
 		$model->lastUpdate = date ( "Y/m/d" );
-		$data = $_POST ['data'];
-		$slotbuff = $_POST ['slotbuff'];
-		$slotnum = $_POST ['slotnum'];
+		$data = json_decode($_POST ['data']);
+		$slotbuff = json_decode($_POST ['slotbuff']);
+		$slotnum =json_decode ($_POST ['slotnum']);
 		$status = $model->updateExceptionAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status 
@@ -177,23 +177,24 @@ class AgendaController extends Controller {
 		$status = $model->updateAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status 
-		)
+		);
 		// 'status' => "yes baby yes"
-		;
+		
 		echo json_encode ( $value );
 	}
 	public function actionCreateException() {
 		$model = new agenda ();
 		$model->owner = $_POST ['owner'];
 		$model->lastUpdate = $_POST ['lastUpdate'];
-		$content = json_decode ($_POST ['data']);
-		$slotbuff = json_decode ($_POST ['slotbuff']);
-		$slotnum = json_decode ($_POST ['slotnum']);
+		$content = json_decode ( $_POST ['data'] );
+		$slotbuff = json_decode ( $_POST ['slotbuff'] );
+		$slotnum = json_decode ( $_POST ['slotnum'] );
 		$status = $model->saveException ( $content, $slotbuff, $slotnum );
 		$value = array (
 				'status' => $status 
-			//'status' => $model->lastUpdate
 		);
+		// 'status' => $model->lastUpdate
+		
 		echo json_encode ( $value );
 	}
 	/*

@@ -9,7 +9,7 @@ use Yii;
  *
  * @property integer $followID
  * @property string $staffID
- * @property integer $studentID
+ * @property string $studentID
  *
  * @property Staff $staff
  * @property Student $student
@@ -31,8 +31,7 @@ class Follow extends \yii\db\ActiveRecord
     {
         return [
             [['staffID', 'studentID'], 'required'],
-            [['studentID'], 'integer'],
-            [['staffID'], 'string', 'max' => 50]
+            [['staffID', 'studentID'], 'string', 'max' => 50]
         ];
     }
 

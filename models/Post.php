@@ -43,7 +43,7 @@ class Post extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'postID' => 'Post ID',
+            'postID' => 'PostID',
             'owner' => 'Owner',
             'content' => 'Content',
             'time' => 'Time',

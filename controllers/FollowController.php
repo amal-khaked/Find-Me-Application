@@ -124,25 +124,22 @@ class FollowController extends Controller
     
     public function actionAdd(){
     	
-    	$studentID = $_GET ['sID'];
-		$staffID = $_GET ['dID'];
-		
-		
-		//echo $email . " " . $pass;
-	   
+    	$studentID = $_GET['sID'];
+		$staffID = $_GET['dID'];	   
 		$status = array ();
     	if (Follow::find()->where(['studentID' => $studentID , 'staffID' => $staffID])->one()){
-    		$status["status"] = "Already following";
+    		$status["status"] = "faild";	
     	}
-    	
         else {
+        	
+    	   
         	$model = new Follow;
         	$model -> studentID = $studentID;
         	$model -> staffID = $staffID;
         	
     	   
     	 	if ($model->save()){
-    	 		$status["status"] = "Followed";
+    	 		$status["status"] = "ok";
     			
     	}
     	
@@ -154,8 +151,25 @@ class FollowController extends Controller
     echo json_encode($status);
     }
 
-    
-    public function actionRemove(){
+    public function  actionGetstatus()
+    {
+    	$studentID = $_GET['sID'];
+    	$staffID = $_GET['dID'];
+    	$status = array ();
+    	$status["status"] = "ok";
+    if (Follow::find()->where(['studentID' => $studentID , 'staffID' => $staffID])->one()){
+    		$status["follow"] = "Following";	
+    	}
+    	else 
+    	{
+    		$status["follow"] = "Follow";
+    		
+    	}
+    	echo json_encode($status);
+    	 
+    }
+    public function actionRemove()
+    {
     	 
     	$studentID = $_GET ['sID'];
     	$staffID = $_GET ['dID'];

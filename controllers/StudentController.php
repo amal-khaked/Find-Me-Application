@@ -128,23 +128,31 @@ class StudentController extends Controller {
 		}
 	}
 
-	public function actionLogin() {
+	public function actionLoginstudent() {
 		$email = $_GET ['email'];
 		$pass = $_GET ['pass'];
+		$status=array();
 		//echo $email . " " . $pass;
 		$model = Student::find()->where(['email' => $email , 'password' => $pass])->one();
-		$student = array();
-		$student['id'] = $model->id;
-		return json_encode($student);
+		if($model==null)
+		{
+			$status["status"]="faild";
+		}
+		else {
+			$status["status"]="ok";
+		
+		$status["email"] = $model->email;
+		}
+		return json_encode($status);
 	}
 	public function actionSignup() {
-			$name = $_GET['name'];
+			$name = $POST['name'];
 		
-			$id = $_GET['id'];
+			$id = $POST['id'];
 		
-			$email = $_GET['email'];
+			$email = $POST['email'];
 	
-			$pass = $_GET['pass'];
+			$pass = $POST['pass'];
 		
 		$model = new Student ;
 		$model->name = $name;

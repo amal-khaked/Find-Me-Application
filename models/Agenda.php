@@ -149,18 +149,21 @@ class Agenda extends \yii\db\ActiveRecord {
 			if ($tempindex == sizeof ( $tempSlotIDs )) {
 				break;
 			}
+			echo $tempSlotIDs [$tempindex] ['slotnum'];
+			echo "<br/>";
+			echo  $slotnum [$index];
 			if ($tempSlotIDs [$tempindex] ['slotnum'] == $slotnum [$index]) {
-				echo $model->updateSlot ( $data [$index], $bookbuffer [$index], $tempSlotIDs [$index] ['slotID'] );
+				$ech = $model->updateSlot ( $data [$index], $bookbuffer [$index], $tempSlotIDs [$index] ['slotID'] );
 				$tempindex ++;
 				$index ++;
 			} elseif ($tempSlotIDs [$tempindex] ['slotnum'] < $slotnum [$index]) {
 				$tempindex ++;
 			} else {
-				$model->saveSlot ( 80, $this->agendaID, $data [$index], 'temp', $this->lastUpdate, $slotnum [$index], $bookbuffer [$index] );
+				$ech =$model->saveSlot (  $this->agendaID, $data [$index], 'temp', $slotnum [$index], $bookbuffer [$index] );
 				$index ++;
 			}
 		}
-		return 'updated';
+		return $ech ;//'updated';
 	}
 	public function updateAgenda(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
 		$model = new Slot ();
@@ -208,10 +211,11 @@ class Agenda extends \yii\db\ActiveRecord {
 		$permindex = 0;
 		$tempindex = 0;
 		$agendforShow = array ();
+		
 		$index = 0;
 		
 		while ( $permindex < sizeof ( $permSlotIDs ) && $tempindex < sizeof ( $tempSlotIDs ) ) {
-			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]) {
+			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]['slotnum']) {
 				$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
 				$agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
@@ -219,6 +223,7 @@ class Agenda extends \yii\db\ActiveRecord {
 				$tempindex ++;
 				$index ++;
 			} else {
+				//echo $permSlotIDs [$permindex] ['slotnum'];
 				$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
 				$agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
