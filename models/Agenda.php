@@ -218,16 +218,24 @@ class Agenda extends \yii\db\ActiveRecord {
 			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]['slotnum']) {
 				$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
-				$agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
 				$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
+				$count = Book::find ()->where ( [
+						'slotID' => $agendforShow [$index] ['slotID']
+				])->count();
+				
+				$agendforShow [$index] ['bookCount'] = $count;
+				
 				$tempindex ++;
 				$index ++;
 			} else {
 				//echo $permSlotIDs [$permindex] ['slotnum'];
 				$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
-				$agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
 				$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
+				$count = Book::find ()->where ( [
+						'slotID' => $agendforShow [$index] ['slotID']
+				])->count();
+				$agendforShow [$index] ['bookCount'] = $count;
 				
 				$permindex ++;
 				$index ++;
@@ -237,8 +245,12 @@ class Agenda extends \yii\db\ActiveRecord {
 		while ( $tempindex < sizeof ( $tempSlotIDs ) ) {
 			$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
 			$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
-			$agendforShow [$index] ['bookCount'] = $tempSlotIDs [$tempindex] ['bookCount'];
 			$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
+			$count = Book::find ()->where ( [
+					'slotID' => $agendforShow [$index] ['slotID']
+			])->count();
+			$agendforShow [$index] ['bookCount'] = $count;
+			
 			$tempindex ++;
 			$index ++;
 		}
@@ -246,8 +258,12 @@ class Agenda extends \yii\db\ActiveRecord {
 		while ( $permindex < sizeof ( $permSlotIDs ) ) {
 			$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
 			$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
-			$agendforShow [$index] ['bookCount'] = $permSlotIDs [$permindex] ['bookCount'];
 			$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
+			$count = Book::find ()->where ( [
+					'slotID' => $agendforShow [$index] ['slotID']
+			])->count();
+			$agendforShow [$index] ['bookCount'] = $count;
+			
 			$permindex ++;
 			$index ++;
 		}

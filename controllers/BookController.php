@@ -176,12 +176,23 @@ class BookController extends Controller {
 				'date',
 				'content' 
 		) )->where ( [ 
-				'studentID' => $model->studentID,
-		]
-		 )->andWhere ( [ 
-						'>=',
-						'date',
-						$date 
+				'studentID' => $model->studentID 
+		] )->andWhere ( [ 
+				'>=',
+				'date',
+				$date 
+		] )->asArray ()->all ();
+		
+		echo json_encode ( $exist );
+	}
+	public function actionGetBookContent() {
+		$model = new Book ();
+		$model->slotID = $_POST ['slotID'];
+		$model->date = $_POST ['date'];
+		
+		$exist = Book::find ()->select ( 'content' )->where ( [ 
+				'slotID' => $model->slotID,
+				'date' => $model->date 
 		] )->asArray ()->all ();
 		
 		echo json_encode ( $exist );
