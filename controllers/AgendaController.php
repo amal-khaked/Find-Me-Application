@@ -217,7 +217,8 @@ class AgendaController extends Controller {
 		$date = $_POST ['date'];
 		$exist = Agenda::find ()->where ( [ 
 				'owner' => $owner,
-				'lastUpdate' => $date 
+				'lastUpdate' => $date ,
+				'type' => 'temp'
 		] )->asArray ()->one ();
 		
 		if ($exist == null) {
@@ -244,5 +245,20 @@ class AgendaController extends Controller {
 		] )->asArray ()->all ();
 		
 		echo json_encode ( $exist );
+	}
+	public function  actionIsException(){
+		$owner = $_POST ['owner'];
+	    $lastUpdate = $_POST ['date'];
+	    
+		$exist = Agenda::find ()->select (
+				'lastUpdate'
+	 )->where ( [
+				'owner' => $owner,
+				'type' => 'temp',
+				'lastUpdate' => $lastUpdate
+		] ) ->asArray ()->all ();
+	
+		echo json_encode ( $exist );
+		
 	}
 }

@@ -110,13 +110,6 @@ class Agenda extends \yii\db\ActiveRecord {
 	public function saveException(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
 		$this->type = 'temp';
 		
-		$exist = Agenda::find ()->where ( [ 
-				'agendaID' => $this->agendaID,
-				'type' => 'temp' 
-		] )->one ();
-		if ($exist != null) {
-			return 'exception already exist update it';
-		}
 		Agenda::save ( true );
 		$agendaID = Yii::$app->db->getLastInsertID ();
 		for($index = 0; $index < sizeof ( $data ); $index ++) {
@@ -144,26 +137,26 @@ class Agenda extends \yii\db\ActiveRecord {
 		] );
 		$tempSlotIDs = $model->getIDs ( $this->agendaID );
 		$tempindex = 0;
-		
-		for($index = 0; $index < sizeof ( $data );) {
+		$index = 0;
+		for(; $index < sizeof ( $data );) {
 			if ($tempindex == sizeof ( $tempSlotIDs )) {
 				break;
 			}
-			echo $tempSlotIDs [$tempindex] ['slotnum'];
-			echo "<br/>";
-			echo  $slotnum [$index];
 			if ($tempSlotIDs [$tempindex] ['slotnum'] == $slotnum [$index]) {
-				$ech = $model->updateSlot ( $data [$index], $bookbuffer [$index], $tempSlotIDs [$index] ['slotID'] );
+				$model->updateSlot ( $data [$index], $bookbuffer [$index], $tempSlotIDs [$index] ['slotID'] );
 				$tempindex ++;
 				$index ++;
 			} elseif ($tempSlotIDs [$tempindex] ['slotnum'] < $slotnum [$index]) {
 				$tempindex ++;
 			} else {
-				$ech =$model->saveSlot (  $this->agendaID, $data [$index], 'temp', $slotnum [$index], $bookbuffer [$index] );
+				$model->saveSlot ( $this->agendaID, $data [$index], 'temp', $slotnum [$index], $bookbuffer [$index] );
 				$index ++;
 			}
 		}
-		return $ech ;//'updated';
+		for($inde = $index; $inde < sizeof ( $data ); $inde ++) {
+			$model->saveSlot ( $this->agendaID, $data [$inde], 'temp', $slotnum [$inde], $bookbuffer [$inde] );
+		}
+		return 'updated';
 	}
 	public function updateAgenda(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
 		$model = new Slot ();
@@ -215,40 +208,43 @@ class Agenda extends \yii\db\ActiveRecord {
 		$index = 0;
 		
 		while ( $permindex < sizeof ( $permSlotIDs ) && $tempindex < sizeof ( $tempSlotIDs ) ) {
-			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex]['slotnum']) {
+			if ($tempSlotIDs [$tempindex] ['slotnum'] == $permSlotIDs [$permindex] ['slotnum']) {
 				$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
 				$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
-				$count = Book::find ()->where ( [
-						'slotID' => $agendforShow [$index] ['slotID']
-				])->count();
+				$count = Book::find ()->where ( [ 
+						'slotID' => $agendforShow [$index] ['slotID'],
+						'date' => $exist ['lastUpdate'] 
+				] )->count ();
 				
 				$agendforShow [$index] ['bookCount'] = $count;
 				
 				$tempindex ++;
 				$index ++;
 			} else {
-				//echo $permSlotIDs [$permindex] ['slotnum'];
+				
 				$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
 				$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
 				$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
-				$count = Book::find ()->where ( [
-						'slotID' => $agendforShow [$index] ['slotID']
-				])->count();
+				$count = Book::find ()->where ( [ 
+						'slotID' => $agendforShow [$index] ['slotID'],
+						'date' => $exist ['lastUpdate'] 
+				] )->count ();
 				$agendforShow [$index] ['bookCount'] = $count;
 				
-				$permindex ++;
 				$index ++;
 			}
+			$permindex ++;
 		}
 		
 		while ( $tempindex < sizeof ( $tempSlotIDs ) ) {
 			$agendforShow [$index] ['slotID'] = $tempSlotIDs [$tempindex] ['slotID'];
 			$agendforShow [$index] ['maxBookers'] = $tempSlotIDs [$tempindex] ['numberOfBookers'];
 			$agendforShow [$index] ['content'] = $tempSlotIDs [$tempindex] ['content'];
-			$count = Book::find ()->where ( [
-					'slotID' => $agendforShow [$index] ['slotID']
-			])->count();
+			$count = Book::find ()->where ( [ 
+					'slotID' => $agendforShow [$index] ['slotID'],
+					'date' => $exist ['lastUpdate'] 
+			] )->count ();
 			$agendforShow [$index] ['bookCount'] = $count;
 			
 			$tempindex ++;
@@ -259,9 +255,10 @@ class Agenda extends \yii\db\ActiveRecord {
 			$agendforShow [$index] ['slotID'] = $permSlotIDs [$permindex] ['slotID'];
 			$agendforShow [$index] ['maxBookers'] = $permSlotIDs [$permindex] ['numberOfBookers'];
 			$agendforShow [$index] ['content'] = $permSlotIDs [$permindex] ['content'];
-			$count = Book::find ()->where ( [
-					'slotID' => $agendforShow [$index] ['slotID']
-			])->count();
+			$count = Book::find ()->where ( [ 
+					'slotID' => $agendforShow [$index] ['slotID'],
+					'date' => $exist ['lastUpdate'] 
+			] )->count ();
 			$agendforShow [$index] ['bookCount'] = $count;
 			
 			$permindex ++;
