@@ -212,6 +212,13 @@ class AgendaController extends Controller {
 		$status = $model->showAgenda ();
 		echo json_encode ( $status );
 	}
+	public function actionSAgenda() {
+		$model = new Agenda ();
+		$model->owner = $_POST ['owner'];
+		$model->lastUpdate = $_POST ['date'];
+		$status = $model->showAgenda ();
+		echo json_encode ( $status );
+	}
 	public function actionGetAgendaInfo() {
 		$owner = $_POST ['owner'];
 		$date = $_POST ['date'];
@@ -260,5 +267,20 @@ class AgendaController extends Controller {
 	
 		echo json_encode ( $exist );
 		
+	}
+
+	public function actionGetCources(){
+		
+		$value = array ();
+		$value[0]['status'] = "Anaysis2";
+		$value[1]['status'] = "DB2";
+		$value[2]['status'] = "ERP";
+		$value[3]['status'] = "Compiler";
+		$value[4]['status'] = "Project";
+		$value[5]['status'] = "Parallel";
+		
+		echo json_encode ( $value );
+		
+	
 	}
 }
