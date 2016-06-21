@@ -190,11 +190,30 @@ class BookController extends Controller {
 		$model->slotID = $_POST ['slotID'];
 		$model->date = $_POST ['date'];
 		
-		$exist = Book::find ()->select ( 'content' )->where ( [ 
+		$exist = Book::find ()->select (array ( 'content', 'studentID') )->where ( [ 
 				'slotID' => $model->slotID,
 				'date' => $model->date 
 		] )->asArray ()->all ();
 		
 		echo json_encode ( $exist );
+	}
+	public function actionDCancelBook() {
+		$model = new Book ();
+		$model->slotID = $_POST ['slotID'];
+		$model->date = $_POST ['Date'];
+		$StudendIDs = array ();
+		$StudendIDs = json_decode ( $_POST ['booker'] );
+		$status = array ();
+		for($i = 0; $i < sizeof ( $StudendIDs ); $i ++) {
+			$exist = Book::deleteAll ( [ 
+					'slotID' => $StudendIDs [$i],
+					'date' => $model->date,
+					'studentID' => $model->studentID 
+			] );
+		}
+		
+		$status ["status"] = "deleted";
+		
+		echo json_encode ( $status );
 	}
 }
