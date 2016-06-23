@@ -117,7 +117,7 @@ class Agenda extends \yii\db\ActiveRecord {
 			$slot->saveSlot ( $agendaID, $data [$index], 'temp', $slotnum [$index], $bookbuffer [$index] );
 		}
 		
-		return 'inserted';
+		return $agendaID;
 	}
 	public function updateExceptionAgenda(array $data = array(), array $bookbuffer = array(), array $slotnum = array()) {
 		$model = new Slot ();
@@ -130,11 +130,6 @@ class Agenda extends \yii\db\ActiveRecord {
 				'owner' => $exist ['owner'],
 				'type' => 'perm' 
 		] )->one ();
-		Agenda::updateAll ( [ 
-				'lastUpdate' => $this->lastUpdate 
-		], [ 
-				'agendaID' => $permAgendaID ['agendaID'] 
-		] );
 		$tempSlotIDs = $model->getIDs ( $this->agendaID );
 		$tempindex = 0;
 		$index = 0;

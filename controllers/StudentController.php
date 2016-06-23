@@ -129,8 +129,8 @@ class StudentController extends Controller {
 	}
 
 	public function actionLoginstudent() {
-		$email = $_GET ['email'];
-		$pass = $_GET ['pass'];
+		$email = $_POST ['email'];
+		$pass = $_POST ['pass'];
 		$status=array();
 		//echo $email . " " . $pass;
 		$model = Student::find()->where(['email' => $email , 'password' => $pass])->one();
@@ -140,19 +140,23 @@ class StudentController extends Controller {
 		}
 		else {
 			$status["status"]="ok";
-		
+			$status["name"] = $model->name;
+				
 		$status["email"] = $model->email;
+		$status["id"] = $model->id;
+		
+		
 		}
 		return json_encode($status);
 	}
-	public function actionSignup() {
-			$name = $POST['name'];
+	public function actionSignupstudent() {
+			$name = $_POST['name'];
 		
-			$id = $POST['id'];
+			$id = $_POST['id'];
 		
-			$email = $POST['email'];
+			$email = $_POST['email'];
 	
-			$pass = $POST['pass'];
+			$pass = $_POST['pass'];
 		
 		$model = new Student ;
 		$model->name = $name;
@@ -162,6 +166,10 @@ class StudentController extends Controller {
 		$status = array();
 		if($model->save()){
 			$status["status"] = "ok";
+			$status["name"]=$name;
+			$status["email"]=$email;
+			$status["id"]=$id;
+			
 		}
 		else 
 			$status["status"] = "failed";

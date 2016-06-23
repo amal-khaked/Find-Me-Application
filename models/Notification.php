@@ -9,10 +9,12 @@ use Yii;
  *
  * @property integer $notificationID
  * @property integer $postID
- * @property integer $notified
+ * @property string $notified
+ * @property string $sender
+ * @property string $type
+ * @property string $seen
  *
  * @property Post $post
- * @property Student $notified0
  */
 class Notification extends \yii\db\ActiveRecord
 {
@@ -30,8 +32,11 @@ class Notification extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['postID', 'notified'], 'required'],
-            [['postID', 'notified'], 'integer']
+            [['postID', 'notified', 'sender', 'type', 'seen'], 'required'],
+            [['postID'], 'integer'],
+            [['notified', 'sender'], 'string', 'max' => 50],
+            [['type'], 'string', 'max' => 30],
+            [['seen'], 'string', 'max' => 15]
         ];
     }
 
@@ -44,6 +49,9 @@ class Notification extends \yii\db\ActiveRecord
             'notificationID' => 'Notification ID',
             'postID' => 'Post ID',
             'notified' => 'Notified',
+            'sender' => 'Sender',
+            'type' => 'Type',
+            'seen' => 'Seen',
         ];
     }
 
@@ -53,13 +61,5 @@ class Notification extends \yii\db\ActiveRecord
     public function getPost()
     {
         return $this->hasOne(Post::className(), ['postID' => 'postID']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getNotified0()
-    {
-        return $this->hasOne(Student::className(), ['id' => 'notified']);
     }
 }

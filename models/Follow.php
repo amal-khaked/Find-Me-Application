@@ -62,4 +62,35 @@ class Follow extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Student::className(), ['id' => 'studentID']);
     }
+    public function getfollowing( $staffID){
+    
+    	$status =array();
+    	$model = Follow::find()->where(['staffID' => $staffID])->all();
+    	if($model == NULL)
+    	{
+    		$status["status"] = "null" ;
+    	}
+    	else
+    
+    	{
+    
+    		 
+    		for($i=0; $i<sizeof($model) ; $i++)
+    		{
+    			$status["status"]  = "ok" ;
+    			$status["studentID"][$i] = $model[$i] -> studentID;
+    
+    
+    		}
+    	}
+    
+    	return ($status);
+    	//$result['studID'] = $model -> staffID ;
+    	//$result['staID'] = $model -> staffID ;
+    
+    	// echo json_encode($result);
+    
+    
+    
+    }
 }

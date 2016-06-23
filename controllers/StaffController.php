@@ -124,10 +124,10 @@ class StaffController extends Controller
     }
     public function actionSignup()
     {
-    	$formalemail=$_GET['id'];
-    	$name=$_GET['name'];
-    	$email=$_GET['email'];
-    	$pass=$_GET['pass'];
+    	$formalemail=$_POST['id'];
+    	$name=$_POST['name'];
+    	$email=$_POST['email'];
+    	$pass=$_POST['pass'];
     
     	$staff=new Staff;
     	$staff->formalemail=$formalemail;
@@ -140,7 +140,10 @@ class StaffController extends Controller
     	{
 	    	if($staff->save())
 	    	{
-				$status["status"] = "ok";
+				$status["status"]="ok";
+				$status["formalemail"]=$formalemail;
+				$status["name"]=$name;
+				$status["email"]=$email;
 				
 			}
 			else 
@@ -164,8 +167,8 @@ class StaffController extends Controller
     
     public function actionLogin()
     {
-    	$formalemail=$_GET['id'];
-    	$pass=$_GET['pass'];
+    	$formalemail=$_POST['id'];
+    	$pass=$_POST['pass'];
     	$model=Staff::find()->where(['formalemail'=>$formalemail ,'password'=>$pass])->one();
     //	$model=Staff::f
     	 
@@ -181,13 +184,14 @@ class StaffController extends Controller
     		$status["name"]=$model ->name;
     		$status["email"]=$model ->email;
     		
+    		
     	}
     	return json_encode($status);
     	 
     }
     public function actionGetmyposts()
     {
-    	$id=$_GET['id'];
+    	$id=$_POST['id'];
     	$staff=new Staff;
     	$staff->formalemail=$id;
     	$model=array();
@@ -207,7 +211,7 @@ class StaffController extends Controller
     	}
     	return json_encode($status);
     
-    	/*$id=$_GET['id'];
+    	/*$id=$_POST['id'];
     	 $staff = Staff::findOne($id);
     	 $a=array();
     	 $staff->formalemail=$id;

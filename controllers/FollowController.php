@@ -124,8 +124,8 @@ class FollowController extends Controller
     
     public function actionAdd(){
     	
-    	$studentID = $_GET['sID'];
-		$staffID = $_GET['dID'];	   
+    	$studentID = $_POST['sID'];
+		$staffID = $_POST['dID'];	   
 		$status = array ();
     	if (Follow::find()->where(['studentID' => $studentID , 'staffID' => $staffID])->one()){
     		$status["status"] = "faild";	
@@ -144,17 +144,17 @@ class FollowController extends Controller
     	}
     	
     		else 
-    			$status["status"] = "Not Saved";
+    			$status["status"] = "faild";
     			
     	
     }
-    echo json_encode($status);
+    return json_encode($status);
     }
 
     public function  actionGetstatus()
     {
-    	$studentID = $_GET['sID'];
-    	$staffID = $_GET['dID'];
+    	$studentID = $_POST['sID'];
+    	$staffID = $_POST['dID'];
     	$status = array ();
     	$status["status"] = "ok";
     if (Follow::find()->where(['studentID' => $studentID , 'staffID' => $staffID])->one()){
@@ -165,14 +165,14 @@ class FollowController extends Controller
     		$status["follow"] = "Follow";
     		
     	}
-    	echo json_encode($status);
+    	return json_encode($status);
     	 
     }
     public function actionRemove()
     {
     	 
-    	$studentID = $_GET ['sID'];
-    	$staffID = $_GET ['dID'];
+    	$studentID = $_POST ['sID'];
+    	$staffID = $_POST ['dID'];
     
     
     	//echo $email . " " . $pass;
@@ -195,32 +195,88 @@ class FollowController extends Controller
     	
     }
     
-    echo json_encode($status);
+    return json_encode($status);
     }
     
     
     //to get some all staff that some id isfollowing 
-    /*public function actionMine(){
+    public function actionGetfollowers()
+    {
     	
-    	$studentID = $_GET ['sID'];
+    	$studentID = $_POST ['sID'];
+    	$status =array();
     	$model = Follow::find()->where(['studentID' => $studentID])->all();
+    	if($model == NULL)
+    	{
+    		$status["status"] = "faild" ;
+    	}
+    	else 
+    	{
+    		
     	
-     	$result = array();
-     	$i = 0;
-     	foreach($model->staffID as $getResult)
-     	{
-     		$result[$i] = $getResult;
-     		$i++;
-     	}
+    	for($i=0; $i<sizeof($model) ; $i++)
+    	{
+    		$status["status"]  = "ok" ;
+    		$status["staffID"][$i] = $model[$i] -> staffID;
+    		
+    		
+    	}
+    	}
      	
-     	 echo json_encode($result);
-     	//$result['studID'] = $model -> staffID ;
-        //$result['staID'] = $model -> staffID ;
-        
-       // echo json_encode($result);
-    	
-    	
-    	
+     	 return json_encode($status);
+     	
     }
-    */
+   
+    
+    public function actionGetfollowing()
+    {
+    	 
+    	$staffID = $_POST ['staffID'];
+    	$status =array();
+    	$model = Follow::find()->where(['staffID' => $staffID])->all();
+    	if($model == NULL)
+    	{
+    		$status["status"] = "null" ;
+    	}
+    	else
+    	
+    	{
+    
+    		 
+    		for($i=0; $i<sizeof($model) ; $i++)
+    		{
+    			$status["status"]  = "ok" ;
+    			$status["studentID"][$i] = $model[$i] -> studentID;
+    
+    
+    		}
+    	}
+    
+    	return json_encode($status);
+    }
+    public function Getfollowing( $staffID){
+    
+    	$status =array();
+    	$model = Follow::find()->where(['staffID' => $staffID])->all();
+    	if($model == NULL)
+    	{
+    		$status["status"] = "null" ;
+    	}
+    	else
+    	 
+    	{
+    
+    		 
+    		for($i=0; $i<sizeof($model) ; $i++)
+    		{
+    			$status["status"]  = "ok" ;
+    			$status["studentID"][$i] = $model[$i] -> studentID;
+    
+    
+    		}
+    	}
+    
+    	return ($status);
+    }
+    
 }

@@ -205,10 +205,11 @@ class BookController extends Controller {
 		$StudendIDs = json_decode ( $_POST ['booker'] );
 		$status = array ();
 		for($i = 0; $i < sizeof ( $StudendIDs ); $i ++) {
+			echo $StudendIDs[0];
 			$exist = Book::deleteAll ( [ 
-					'slotID' => $StudendIDs [$i],
+					'slotID' =>$model->slotID ,
 					'date' => $model->date,
-					'studentID' => $model->studentID 
+					'studentID' => $StudendIDs [$i]
 			] );
 		}
 		

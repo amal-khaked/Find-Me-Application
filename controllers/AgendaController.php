@@ -129,10 +129,10 @@ class AgendaController extends Controller {
 	}
 	public function actionCreateAgenda() {
 		$model = new Agenda ();
-		$model->owner = $_POST ['owner'];
-		$model->lastUpdate = date ( "Y/m/d" );
+		$model->owner = $_POST ['owner'];		
 		$content = json_decode ( $_POST ['data'] );
 		$slotbuff = json_decode ( $_POST ['slotbuff'] );
+		$model->lastUpdate = $_POST ['date'];
 		$status = $model->saveAgenda ( $content, $slotbuff );
 		$value = array (
 				'status' => $status 
@@ -157,13 +157,12 @@ class AgendaController extends Controller {
 	public function actionUpdateExceptionAgenda() {
 		$model = new Agenda ();
 		$model->agendaID = $_POST ['agendaID'];
-		$model->lastUpdate = date ( "Y/m/d" );
 		$data = json_decode($_POST ['data']);
 		$slotbuff = json_decode($_POST ['slotbuff']);
 		$slotnum =json_decode ($_POST ['slotnum']);
 		$status = $model->updateExceptionAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
-				'status' => $status 
+				'status' => $model->agendaID 
 		);
 		echo json_encode ( $value );
 	}
@@ -176,7 +175,7 @@ class AgendaController extends Controller {
 		$slotnum = json_decode ( $_POST ['slotnum'] );
 		$status = $model->updateAgenda ( $data, $slotbuff, $slotnum );
 		$value = array (
-				'status' => $status 
+				'status' => $model->agendaID 
 		);
 		// 'status' => "yes baby yes"
 		
